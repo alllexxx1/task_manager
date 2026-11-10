@@ -6,10 +6,11 @@
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>TaskManager</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
     <h1>Список задач:</h1>
-    <div>
+    <div class="table-wrapper">
         <table>
         <thead><tr><th>Название</th><th>Категория</th><th>Приоритет</th><th>Статус</th></tr></thead>
         <tbody>

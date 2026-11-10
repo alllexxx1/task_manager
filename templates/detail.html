@@ -6,6 +6,7 @@
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>{{ task.title }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
     <h1>{{ task.title }}</h1>
@@ -14,7 +15,7 @@
         <p>Приоритет: {{ task.priority_name }}</p>
         <p>Статус: {{ task.status_name }}</p>
         <h2>Описание:</h2>
-        <p>{{ task.description }}</p>
+        <p class="description">{{ task.description }}</p>
     </div>
 </body>
 </html>
