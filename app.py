@@ -30,6 +30,9 @@ def read_form() -> dict:
         "status_id": request.form.get("status_id", ""),
     }
 
+@app.route('/')
+def welcome_page():
+    return render_template('welcome_page.html')
 
 @app.route('/tasks')  # https://localhost:500/tasks
 def index():
@@ -97,6 +100,16 @@ def delete(task_id):
 
     delete_task(task_id)
     return redirect(url_for('index'))
+
+
+@app.errorhandler(404)
+def not_found(error):
+    return render_template('errors/404.html'), 404
+
+
+@app.errorhandler(500)
+def server_error(error):
+    return render_template('errors/500.html'), 500
 
 
 if __name__ == '__main__':
