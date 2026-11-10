@@ -41,3 +41,16 @@ def create_task(task: dict) -> int:
              task["priority_id"], task["status_id"]),
         ).fetchone()
         return row["id"]
+
+
+def update_task(task_id: int, task: dict) -> None:
+    with get_connection() as connection:
+        connection.execute(
+            """
+            UPDATE tasks SET title = %s, description = %s, category_id = %s,
+                             priority_id = %s, status_id = %s
+            WHERE id = %s
+            """,
+            (task["title"], task["description"], task["category_id"],
+             task["priority_id"], task["status_id"], task_id),
+        )

@@ -1,6 +1,6 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, abort
 
-from models.tasks import list_tasks, get_task, create_task
+from models.tasks import list_tasks, get_task, create_task, update_task
 from models.categories import list_categories
 from models.priorities import list_priorities
 from models.statuses import list_statuses
@@ -19,6 +19,17 @@ def validate_task(task: dict, category_list: list[dict],
     if task["status_id"] not in [str(status["id"]) for status in status_list]:
         return "Выберите существующий статус."
     return ""
+
+
+def read_form() -> dict:
+    return {
+        "title": request.form.get("title", "").strip(),
+        "description": request.form.get("description", ""),
+        "category_id": request.form.get("category_id", ""),
+        "priority_id": request.form.get("priority_id", ""),
+        "status_id": request.form.get("status_id", ""),
+    }
+
 
 @app.route('/tasks')  # https://localhost:500/tasks
 def index():
@@ -42,17 +53,38 @@ def create():
     error = ''
 
     if request.method == 'POST':
-        task = {
-            "title": request.form.get("title", "").strip(),
-            "description": request.form.get("description", ""),
-            "category_id": request.form.get("category_id", ""),
-            "priority_id": request.form.get("priority_id", ""),
-            "status_id": request.form.get("status_id", ""),
-        }
-        error = validate_task(task, category_list, priority_list, status_list) # None
+        task = read_form()
+        error = validate_task(task, category_list, priority_list, status_list)
 
         if not error:
             task_id = create_task(task)
+            return redirect(url_for('detail', task_id=task_id))
+
+    return render_template('form.html', task=task, error=error,
+                           categories=category_list, priorities=priority_list, statuses=status_list)
+
+
+@app.route('/tasks/<int:task_id>/edit', methods=["GET", "POST"])
+def edit(task_id: int):
+    task = get_task(task_id=task_id)
+    if task is None:
+        abort(404)
+
+    task["category_id"] = str(task["category_id"])
+    task["priority_id"] = str(task["priority_id"])
+    task["status_id"] = str(task["status_id"])
+
+    category_list = list_categories()
+    priority_list = list_priorities()
+    status_list = list_statuses()
+    error = ''
+
+    if request.method == 'POST':
+        task = read_form()
+        error = validate_task(task, category_list, priority_list, status_list)
+
+        if not error:
+            update_task(task_id, task)
             return redirect(url_for('detail', task_id=task_id))
 
     return render_template('form.html', task=task, error=error,

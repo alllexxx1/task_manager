@@ -17,6 +17,7 @@
         <p>Статус: {{ task.status_name }}</p>
         <h2>Описание:</h2>
         <p class="description">{{ task.description }}</p>
+        <p><a href="{{ url_for('edit', task_id=task.id) }}">Редактировать</a></p>
     </div>
 </body>
 </html>
