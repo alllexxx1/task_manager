@@ -1,6 +1,6 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, request, redirect, url_for
 
-from models.tasks import list_tasks, get_task
+from models.tasks import list_tasks, get_task, create_task
 from models.categories import list_categories
 from models.priorities import list_priorities
 from models.statuses import list_statuses
@@ -38,7 +38,25 @@ def create():
     category_list = list_categories()
     priority_list = list_priorities()
     status_list = list_statuses()
+    task = {"title": "", "description": "", "category_id": "", "priority_id": "", "status_id": ""}
+    error = ''
 
+    if request.method == 'POST':
+        task = {
+            "title": request.form.get("title", "").strip(),
+            "description": request.form.get("description", ""),
+            "category_id": request.form.get("category_id", ""),
+            "priority_id": request.form.get("priority_id", ""),
+            "status_id": request.form.get("status_id", ""),
+        }
+        error = validate_task(task, category_list, priority_list, status_list) # None
+
+        if not error:
+            task_id = create_task(task)
+            return redirect(url_for('detail', task_id=task_id))
+
+    return render_template('form.html', task=task, error=error,
+                           categories=category_list, priorities=priority_list, statuses=status_list)
 
 if __name__ == '__main__':
     app.run(debug=True, port=5001)

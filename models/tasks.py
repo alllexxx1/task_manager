@@ -28,3 +28,16 @@ def get_task(task_id: int) -> dict | None:
 
     with get_connection() as connection:
         return connection.execute(query, (task_id,)).fetchone()
+
+
+def create_task(task: dict) -> int:
+    with get_connection() as connection:
+        row = connection.execute(
+            """
+            INSERT INTO tasks (title, description, category_id, priority_id, status_id)
+            VALUES (%s, %s, %s, %s, %s) RETURNING id
+            """,
+            (task["title"], task["description"], task["category_id"],
+             task["priority_id"], task["status_id"]),
+        ).fetchone()
+        return row["id"]
