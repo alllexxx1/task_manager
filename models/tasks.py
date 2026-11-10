@@ -54,3 +54,7 @@ def update_task(task_id: int, task: dict) -> None:
             (task["title"], task["description"], task["category_id"],
              task["priority_id"], task["status_id"], task_id),
         )
+
+def delete_task(task_id: int) -> None:
+    with get_connection() as connection:
+        connection.execute("DELETE FROM tasks WHERE id = %s", (task_id,))
