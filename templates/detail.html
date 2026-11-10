@@ -10,6 +10,7 @@
 </head>
 <body>
     <h1>{{ task.title }}</h1>
+    <p><a href="{{ url_for('index') }}">К списку задач</a></p>
     <div>
         <p>Категория: {{ task.category_name }}</p>
         <p>Приоритет: {{ task.priority_name }}</p>
